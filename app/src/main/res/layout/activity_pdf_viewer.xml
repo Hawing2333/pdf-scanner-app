@@ -4,7 +4,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="#E0E0E0">
+    android:background="#E0E0E0"
+    android:fitsSystemWindows="true">
 
     <!-- 工具栏 -->
     <LinearLayout
@@ -14,7 +15,6 @@
         android:background="@color/primary_dark"
         android:orientation="horizontal"
         android:gravity="center_vertical"
-        android:fitsSystemWindows="true"
         android:paddingStart="4dp"
         android:paddingEnd="8dp">
 

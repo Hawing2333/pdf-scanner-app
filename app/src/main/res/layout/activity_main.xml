@@ -4,18 +4,23 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="@color/bg_light">
+    android:background="@color/bg_light"
+    android:fitsSystemWindows="true">
 
-    <!-- 工具栏（适配系统状态栏） -->
+    <!-- 工具栏 -->
     <com.google.android.material.appbar.MaterialToolbar
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
         android:background="@color/primary_dark"
-        android:fitsSystemWindows="true"
         app:title="PDF 图片文字搜索"
         app:titleTextColor="@color/white"
         app:titleCentered="true" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/primary" />
 
     <ScrollView
         android:layout_width="match_parent"
