@@ -6,23 +6,30 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.EditorInfo;
+import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.material.button.MaterialButton;
+
 public class PdfViewerActivity extends AppCompatActivity {
 
     private RecyclerView rvPages;
     private TextView tvTitle;
+    private EditText etGotoPage;
     private PdfHelper pdfHelper;
     private int currentPage;
     private int totalPages;
+    private LinearLayoutManager lm;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,18 +49,22 @@ public class PdfViewerActivity extends AppCompatActivity {
         }
 
         tvTitle = findViewById(R.id.tv_viewer_title);
-        updateTitle();
+        etGotoPage = findViewById(R.id.et_goto_page);
+        MaterialButton btnGoto = findViewById(R.id.btn_goto);
 
         rvPages = findViewById(R.id.rv_pages);
-        LinearLayoutManager lm = new LinearLayoutManager(this);
+        lm = new LinearLayoutManager(this);
         rvPages.setLayoutManager(lm);
         PageAdapter adapter = new PageAdapter();
         rvPages.setAdapter(adapter);
 
-        // 跳转到目标页
-        rvPages.post(() -> {
+        updateTitle();
+
+        // 跳转到目标页（延迟确保RecyclerView已布局完成）
+        rvPages.postDelayed(() -> {
             lm.scrollToPositionWithOffset(currentPage, 0);
-        });
+            updateTitle();
+        }, 300);
 
         // 滚动监听，更新当前页
         rvPages.addOnScrollListener(new RecyclerView.OnScrollListener() {
@@ -67,25 +78,48 @@ public class PdfViewerActivity extends AppCompatActivity {
             }
         });
 
+        // 导航按钮
         ImageButton btnBack = findViewById(R.id.btn_back);
         ImageButton btnPrev = findViewById(R.id.btn_prev);
         ImageButton btnNext = findViewById(R.id.btn_next);
 
         btnBack.setOnClickListener(v -> finish());
-        btnPrev.setOnClickListener(v -> {
-            if (currentPage > 0) {
-                currentPage--;
-                lm.scrollToPositionWithOffset(currentPage, 0);
-                updateTitle();
+        btnPrev.setOnClickListener(v -> goToPage(currentPage - 1));
+        btnNext.setOnClickListener(v -> goToPage(currentPage + 1));
+
+        // 跳转指定页
+        btnGoto.setOnClickListener(v -> doGoToPage());
+        etGotoPage.setOnEditorActionListener((v, actionId, event) -> {
+            if (actionId == EditorInfo.IME_ACTION_DONE) {
+                doGoToPage();
+                return true;
             }
+            return false;
         });
-        btnNext.setOnClickListener(v -> {
-            if (currentPage < totalPages - 1) {
-                currentPage++;
-                lm.scrollToPositionWithOffset(currentPage, 0);
-                updateTitle();
+    }
+
+    private void goToPage(int page) {
+        if (page >= 0 && page < totalPages) {
+            currentPage = page;
+            lm.scrollToPositionWithOffset(currentPage, 0);
+            updateTitle();
+        }
+    }
+
+    private void doGoToPage() {
+        String text = etGotoPage.getText().toString().trim();
+        if (text.isEmpty()) return;
+        try {
+            int page = Integer.parseInt(text);
+            if (page >= 1 && page <= totalPages) {
+                goToPage(page - 1);
+                etGotoPage.setText("");
+            } else {
+                Toast.makeText(this, "页码超出范围 (1-" + totalPages + ")", Toast.LENGTH_SHORT).show();
             }
-        });
+        } catch (NumberFormatException e) {
+            Toast.makeText(this, "请输入有效的页码", Toast.LENGTH_SHORT).show();
+        }
     }
 
     private void updateTitle() {

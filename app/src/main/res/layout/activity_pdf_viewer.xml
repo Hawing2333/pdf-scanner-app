@@ -53,6 +53,31 @@
             android:src="@drawable/ic_arrow_forward"
             android:contentDescription="下一页"
             app:tint="@color/white" />
+
+        <EditText
+            android:id="@+id/et_goto_page"
+            android:layout_width="50dp"
+            android:layout_height="32dp"
+            android:layout_marginStart="8dp"
+            android:hint="页码"
+            android:inputType="number"
+            android:textSize="12sp"
+            android:textColorHint="#99FFFFFF"
+            android:textColor="#FFFFFF"
+            android:background="@drawable/input_bg_dark"
+            android:padding="4dp"
+            android:gravity="center" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_goto"
+            android:layout_width="48dp"
+            android:layout_height="32dp"
+            android:layout_marginStart="4dp"
+            android:text="Go"
+            android:textSize="11sp"
+            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+            android:textColor="@color/white"
+            app:strokeColor="#99FFFFFF" />
     </LinearLayout>
 
     <!-- PDF 页面列表 -->
