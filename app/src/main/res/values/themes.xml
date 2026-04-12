@@ -2,7 +2,7 @@
 <resources>
     <style name="Theme.Pdfscannerapp" parent="Theme.MaterialComponents.Light.NoActionBar">
         <item name="android:windowBackground">@color/bg_light</item>
-        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:statusBarColor">@color/primary_dark</item>
         <item name="android:navigationBarColor">@color/bg_light</item>
         <item name="colorPrimary">@color/primary</item>
         <item name="colorPrimaryDark">@color/primary_dark</item>

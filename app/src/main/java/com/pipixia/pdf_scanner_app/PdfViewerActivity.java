@@ -3,14 +3,12 @@ package com.pipixia.pdf_scanner_app;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -36,6 +34,9 @@ public class PdfViewerActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_pdf_viewer);
 
+        // 设置状态栏透明且图标为深色（解决状态栏过曝问题）
+        setupStatusBar();
+
         Uri uri = getIntent().getData();
         currentPage = getIntent().getIntExtra("page", 0);
         totalPages = getIntent().getIntExtra("total", 0);
@@ -60,11 +61,25 @@ public class PdfViewerActivity extends AppCompatActivity {
 
         updateTitle();
 
-        // 跳转到目标页（延迟确保RecyclerView已布局完成）
-        rvPages.postDelayed(() -> {
-            lm.scrollToPositionWithOffset(currentPage, 0);
-            updateTitle();
-        }, 300);
+        // 跳转到目标页 - 多次尝试确保RecyclerView已布局完成
+        if (currentPage > 0) {
+            final int targetPage = currentPage;
+            // 立即滚动到目标位置
+            lm.scrollToPosition(targetPage);
+            // 多次延迟尝试精确定位（RecyclerView布局需要时间）
+            rvPages.postDelayed(() -> {
+                lm.scrollToPosition(targetPage);
+                updateTitle();
+            }, 200);
+            rvPages.postDelayed(() -> {
+                lm.scrollToPositionWithOffset(targetPage, 0);
+                updateTitle();
+            }, 500);
+            rvPages.postDelayed(() -> {
+                lm.scrollToPositionWithOffset(targetPage, 0);
+                updateTitle();
+            }, 1000);
+        }
 
         // 滚动监听，更新当前页
         rvPages.addOnScrollListener(new RecyclerView.OnScrollListener() {
@@ -96,6 +111,11 @@ public class PdfViewerActivity extends AppCompatActivity {
             }
             return false;
         });
+    }
+
+    private void setupStatusBar() {
+        // 状态栏颜色与工具栏一致（primary_dark），图标为白色
+        getWindow().setStatusBarColor(getColor(R.color.primary_dark));
     }
 
     private void goToPage(int page) {

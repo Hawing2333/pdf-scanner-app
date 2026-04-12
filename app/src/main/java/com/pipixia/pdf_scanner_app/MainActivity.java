@@ -59,8 +59,14 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        setupStatusBar();
         initViews();
         setupListeners();
+    }
+
+    private void setupStatusBar() {
+        // 状态栏颜色与工具栏一致（primary_dark），图标为白色
+        getWindow().setStatusBarColor(getColor(R.color.primary_dark));
     }
 
     private void initViews() {
